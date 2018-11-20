@@ -1,0 +1,17 @@
+Wave Packet Dynamics
+
+The Schrodinger equation is computationally intensive to solve, motivating a need to use accurate approximations and representations. The Wave Packet equation is one such representation. In this project, we explore the solution space of a numerical method for solving the wave packet equation, given by a Gaussian function. The parameters of the equations are represented by the follow system of differential equations:
+
+dqdt = (1/mass) * p
+dpdt = -1 * gradient(q) * V
+dGammadt = (1/mass) * eta
+dEtadt = 9 * reduced_planck_constant^2 * (1/9 * mass^2 * gamma^3) - partialVpartialGamma
+
+Where V is an arbitrary potential function
+
+We solve these equations using the Velocity Verlet algorithm
+1. Calculate x(t + delta_t) = x(t) + v(t) * delta_t + (1/2) * a(t) * delta_t^2
+2. Derive a(t + delta_t) from the interaction potential using x(t + delta_t)
+3. Calcualte v(t + delta_t) = v(t) + (1/2) * (a(t) + a(t + delta_t)) * delta_t
+
+Phase 1 Notes can be found here: https://docs.google.com/document/d/1smiK9HpLxCZlpfSQT9hqaWcsTJRhdISWAkxzz-T6Oc8/edit?usp=sharing
