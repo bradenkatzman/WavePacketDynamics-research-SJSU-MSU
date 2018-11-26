@@ -15,6 +15,8 @@
 %    x(t+dt) = x(t) + v(t) * dt + 0.5 * a(t) * dt * dt
 %    v(t+dt) = v(t) + 0.5 * ( a(t) + a(t+dt) ) * dt
 %    a(t+dt) = f(t) / m
+%
+% Resource Used: https://people.sc.fsu.edu/~jburkardt/m_src/md/md.m
 
 function [positions, velocities, accelerations] = ...
 velocity_verlet(num_particles, num_dimensions, ...
