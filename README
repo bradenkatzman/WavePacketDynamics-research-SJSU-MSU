@@ -7,7 +7,7 @@ dpdt = -1 * gradient(q) * V
 dGammadt = (1/mass) * eta
 dEtadt = 9 * reduced_planck_constant^2 * (1/9 * mass^2 * gamma^3) - partialVpartialGamma
 
-Where V is an arbitrary potential function
+Where V is an arbitrary potential function, q(t) is the position and p(t) is the velocity
 
 We solve these equations using the Velocity Verlet algorithm
 1. Calculate x(t + delta_t) = x(t) + v(t) * delta_t + (1/2) * a(t) * delta_t^2
@@ -15,3 +15,12 @@ We solve these equations using the Velocity Verlet algorithm
 3. Calcualte v(t + delta_t) = v(t) + (1/2) * (a(t) + a(t + delta_t)) * delta_t
 
 Phase 1 Notes can be found here: https://docs.google.com/document/d/1smiK9HpLxCZlpfSQT9hqaWcsTJRhdISWAkxzz-T6Oc8/edit?usp=sharing
+
+Repository Structure:
+Wave_Packet_Dynamics/
+	arbitrary_potentials.m - defines the arbitrary potentials used in the simulations (in progress)
+	compute_forces.m - computes the force, potential energy and kinetic energy (in progress)
+	evol_eq_simulation.m - the main script which executes the simulation (in progress)
+	initialize.m - initializes the positions, velocities and accelerations of the particles (in progres)
+	velocity_verlet.m - used the Velocity Verlet algorithm to compute the positions, velocities and accelerations of the particles
+	 					at each step of the simulation (in progress)
