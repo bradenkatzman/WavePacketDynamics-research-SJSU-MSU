@@ -53,14 +53,11 @@ dt = 0.001; % integration time
 % simulation parameters
 simulation_steps = 100000; % the number of integration steps to take
 
-% set up the system of ODES
-% dqdt = (1/mass) * INTEGRATE(dpdt);
-% dpdt = -1 * gradient(INTEGRATE(dqdt)) * V
-% dGammadt = (1/mass) * INTEGRATE(dEtadt)
-% dEtadt = 9 * reduced_planck_constant * reduced_planck_constant *
-% (1/9*mass*mass*gamma*gamma*gamma) - partialVpartialGamma
 
 for step = 0:simulation_steps
+    
+    % STEP 1 - Solve for Q (position) and P (velocity) using Velocity
+    % Verley
     
     % initialize the positions, velocities and accelerations if starting
     % the simulation
@@ -69,7 +66,7 @@ for step = 0:simulation_steps
     else
         % update the positions, velocities and acceleration using the
         % velocity verlet algorithm
-        [positions, velocities, accelerations] = velocity_verley(num_particles, num_dimensions,...
+        [positions, velocities, accelerations] = velocity_verlet(num_particles, num_dimensions,...
             positions, velocities, forces, accelerations, mass, dt);
     end
     
@@ -78,10 +75,19 @@ for step = 0:simulation_steps
         positions, velocities, mass); % this call may be updated to reflect the ability to specific different potential operators
     
     
+    % STEP 2 - Solve for GAMMA and ETA
+    
+    % STEP 3 - Solve GAUSSIAN TEST FUNCTION
+    
+    % LOG RESULTS
+    
     % TODO - add some data reporting here on a set step frequency basis -
     % see resource linked above for example
     
 end
+
+
+% NOT SURE HOW/IF THESE FUNCTIONS FACTOR IN HERE
 
 % The velocity equation for the Velocity Verlet algorithm
 function dqdt = diff_eq_DQDT(p)
