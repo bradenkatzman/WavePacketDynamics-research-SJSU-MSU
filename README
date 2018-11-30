@@ -3,11 +3,11 @@ Wave Packet Dynamics
 The Schrodinger equation is computationally intensive to solve, motivating a need to use accurate approximations and representations. The Wave Packet equation is one such representation. In this project, we explore the solution space of a numerical method for solving the wave packet equation, given by a Gaussian function. The parameters of the equations are represented by the follow system of differential equations:
 
 dqdt = (1/mass) * p
-dpdt = -1 * gradient(q) * V
+dpdt = -del(q)V
 dGammadt = (1/mass) * eta
-dEtadt = 9 * reduced_planck_constant^2 * (1/9 * mass^2 * gamma^3) - partialVpartialGamma
+dEtadt = 9 * reduced_planck_constant^2 * (1/9 * mass^2 * gamma^3) - del(gamma)V
 
-Where V is an arbitrary potential function, q(t) is the position and p(t) is the velocity
+Where V is an arbitrary potential function, q(t) is the position, p(t) is the velocity, p'(t) is the acceleration, gamma(t) is the wave packet width, eta(t) is the wave packet momentum, and eta'(t) is the wave packet acceleration
 
 We solve these equations using the Velocity Verlet algorithm
 1. Calculate x(t + delta_t) = x(t) + v(t) * delta_t + (1/2) * a(t) * delta_t^2
@@ -18,9 +18,9 @@ Phase 1 Notes can be found here: https://docs.google.com/document/d/1smiK9HpLxCZ
 
 Repository Structure:
 Wave_Packet_Dynamics/
-	arbitrary_potentials.m - defines the arbitrary potentials used in the simulations (in progress)
-	compute_forces.m - computes the force, potential energy and kinetic energy (in progress)
-	evol_eq_simulation.m - the main script which executes the simulation (in progress)
-	initialize.m - initializes the positions, velocities and accelerations of the particles (in progres)
-	velocity_verlet.m - used the Velocity Verlet algorithm to compute the positions, velocities and accelerations of the particles
-	 					at each step of the simulation (in progress)
+	compute_force_etaPRIME_1.m - computes dEta/dt using the first example V in Section IV. Example Systems
+	compute_force_pPRIME_1.m - computes dp/dt using the first example V in Section IV. Example Systems
+	initialize.m - initializes the variables
+	velocity_verlet.m - used the Velocity Verlet algorithm to q, p, p', gamma, eta, eta'
+	WavePacketDynamics_simulation.m - the main script which executes the simulation
+	

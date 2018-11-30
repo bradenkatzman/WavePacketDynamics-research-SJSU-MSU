@@ -32,7 +32,7 @@ delta_t = 0.001; % integration time
 % simulation parameters
 simulation_steps = 100000; % the number of integration steps to take
 potential_operator_idx = 1; % we'll use this to toggle different equations of V
-log_frequency = 100;
+log_frequency = 10000;
 
 
 for simulation_step = 1:simulation_steps
@@ -65,9 +65,17 @@ for simulation_step = 1:simulation_steps
     % LOG RESULTS
     if mod(simulation_step, log_frequency) == 0
        disp("Updating plot at step: " + simulation_step);
+       
+       % we'll plot the positions as a continuous line in 3D with
+       % annotations on the line at these intervals so that we can
+       % discern the trajectory over time
+       plot3(reshape(q_pos(1, 1, 1:simulation_step), [1, simulation_step]),...
+           reshape(q_pos(2, 1, 1:simulation_step), [1, simulation_step]),...
+           reshape(q_pos(3, 1, 1:simulation_step), [1, simulation_step]),...
+           '-*', 'MarkerIndices', 1:1000:simulation_step);
     end
     
-    % TODO - add some data reporting here on a set step frequency basis -
+    % TODO - add some data report   ing here on a set step frequency basis -
     % see resource linked above for example
     
 end
