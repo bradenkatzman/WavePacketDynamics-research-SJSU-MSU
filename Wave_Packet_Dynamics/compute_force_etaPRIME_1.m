@@ -1,0 +1,19 @@
+% Wave Packet Dynamics
+% Calculate etaPRIME for the potential operator:
+% dEta/dt = (9 * reduced_planck_const^2) /(4 * mass^2 * gamma^3) - ...
+%                                               del(gamma)V
+% V = epsilon(q^2 + gamma^2)
+% --> del(gamma)V = 2*epsilon*gamma
+
+function etaPRIME_acc = compute_force_etaPRIME_1(etaPRIME_acc, num_particles,...
+       gamma_packet_width, simulation_step,...
+       epsilon, mass, reduced_planck_constant)
+   
+   for particle_itr = 1:num_particles
+      etaPRIME_acc(particle_itr, simulation_step) = ((9 * reduced_planck_constant * reduced_planck_constant) / ...
+          (4 * mass * mass * ...
+          gamma_packet_width(particle_itr, simulation_step) * gamma_packet_width(particle_itr, simulation_step)  * gamma_packet_width(particle_itr, simulation_step))) - ...
+          2 * epsilon* gamma_packet_width(particle_itr, simulation_step);
+   end
+   
+end
