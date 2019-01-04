@@ -25,7 +25,7 @@ velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentu
         % compute the new acceleration pPRIME -- pPRIME(t+1)
         if potential_operator_idx == 1
            pPRIME_acc = compute_force_pPRIME_1(pPRIME_acc, num_dimensions, num_particles,...
-                                                                                q_pos, simulation_step, epsilon, mass);
+                                                                                q_pos, simulation_step, epsilon);
         end
 
         % compute the new velocity p -- p(t+1)
