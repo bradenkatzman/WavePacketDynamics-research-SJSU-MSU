@@ -27,12 +27,17 @@ reduced_planck_constant = 1;
 num_particles = 1;
 num_dimensions = 3;
 epsilon = 1;
+omega = sqrt((2 * epsilon) / mass);
+gamma_0 = 1;
+A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
+    (8 * mass * mass * gamma_0 * gamma_0 * epsilon);
+
 delta_t = 0.001; % integration time
 
 % simulation parameters
-simulation_steps = 100000; % the number of integration steps to take
+simulation_steps = 50000; % the number of integration steps to take
 potential_operator_idx = 1; % we'll use this to toggle different equations of V
-log_frequency = 10000;
+log_frequency = 1000;
 
 
 for simulation_step = 1:simulation_steps
@@ -66,31 +71,49 @@ for simulation_step = 1:simulation_steps
     if mod(simulation_step, log_frequency) == 0
        disp("Updating plot at step: " + simulation_step);
        
-       % plot the components of q separately
+       % plot the components of q separately, against the know solutions:
+       % 
+       % q_1(t) = cos(omega*t), q_2(t) = 0, q_3(t) = 0
+       % eta(t) = root(A_0 * sin^2(omega * t) + eta_0^2 * cos^2(omega * t))
+       %
+       % omega = root(2*epsilon / mass)
+       % A_0 = 9*reduced_planck_constant^2 / 8 * mass^2 * eta_0^2 * epsilon
+       % 
        figure(1);
        plot(1:simulation_step, reshape(q_pos(1, 1, 1:simulation_step), 1, simulation_step));
+       hold on
+       plot(1:simulation_step, cos(omega*(1:simulation_step)));
+       hold off
        xlabel('time');
        ylabel('q1');
        title('q1 - position, component 1');
+       drawnow
        
        figure(2);
        plot(1:simulation_step, reshape(q_pos(2, 1, 1:simulation_step), 1, simulation_step));
        xlabel('time');
        ylabel('q2');
        title('q2 - position, component 2');
+       drawnow
        
        figure(3);
        plot(1:simulation_step, reshape(q_pos(3, 1, 1:simulation_step), 1, simulation_step));
        xlabel('time');
        ylabel('q3');
        title('q3 - position, component 3');
+       drawnow
        
        
        % plot gamma
        figure(4);
        plot(1:simulation_step, gamma_packet_width(1, 1:simulation_step));
+       hold on
+       plot(1:simulation_step, sqrt((A_0 * sin(omega * (1:simulation_step)).^2) + ...
+           (gamma_0 * gamma_0 * cos(omega * (1:simulation_step)))));
+       hold off
        xlabel('time');
        ylabel('gamma');
        title('gamma - packet width');
+       drawnow
     end
 end
