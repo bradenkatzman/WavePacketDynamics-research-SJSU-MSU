@@ -32,16 +32,15 @@ gamma_0 = 1;
 A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
     (8 * mass * mass * gamma_0 * gamma_0 * epsilon);
 
-delta_t = 0.001; % integration time
-
 % simulation parameters
-simulation_steps = 50000; % the number of integration steps to take
+simulation_steps = 10000; % the number of integration steps to take
+delta_t = 0.001; % integration time
+t_total = simulation_steps * delta_t;
 potential_operator_idx = 1; % we'll use this to toggle different equations of V
-log_frequency = 1000;
 
+t = linspace(0, t_total, simulation_steps); % t represents all the integration times in the interval 0 through 10
 
 for simulation_step = 1:simulation_steps
-    
     % STEP 1 - Solve for Q (position) and P (velocity) using Velocity
     % Verlet
     
@@ -65,55 +64,53 @@ for simulation_step = 1:simulation_steps
             num_dimensions, num_particles, ...
             potential_operator_idx);
     end
-    
-    
-    % LOG RESULTS
-    if mod(simulation_step, log_frequency) == 0
-       disp("Updating plot at step: " + simulation_step);
-       
-       % plot the components of q separately, against the know solutions:
-       % 
-       % q_1(t) = cos(omega*t), q_2(t) = 0, q_3(t) = 0
-       % eta(t) = root(A_0 * sin^2(omega * t) + eta_0^2 * cos^2(omega * t))
-       %
-       % omega = root(2*epsilon / mass)
-       % A_0 = 9*reduced_planck_constant^2 / 8 * mass^2 * eta_0^2 * epsilon
-       % 
-       figure(1);
-       plot(1:simulation_step, reshape(q_pos(1, 1, 1:simulation_step), 1, simulation_step));
-       hold on
-       plot(1:simulation_step, cos(omega*(1:simulation_step)));
-       hold off
-       xlabel('time');
-       ylabel('q1');
-       title('q1 - position, component 1');
-       drawnow
-       
-       figure(2);
-       plot(1:simulation_step, reshape(q_pos(2, 1, 1:simulation_step), 1, simulation_step));
-       xlabel('time');
-       ylabel('q2');
-       title('q2 - position, component 2');
-       drawnow
-       
-       figure(3);
-       plot(1:simulation_step, reshape(q_pos(3, 1, 1:simulation_step), 1, simulation_step));
-       xlabel('time');
-       ylabel('q3');
-       title('q3 - position, component 3');
-       drawnow
-       
-       
-       % plot gamma
-       figure(4);
-       plot(1:simulation_step, gamma_packet_width(1, 1:simulation_step));
-       hold on
-       plot(1:simulation_step, sqrt((A_0 * sin(omega * (1:simulation_step)).^2) + ...
-           (gamma_0 * gamma_0 * cos(omega * (1:simulation_step)))));
-       hold off
-       xlabel('time');
-       ylabel('gamma');
-       title('gamma - packet width');
-       drawnow
-    end
-end
+end % end simulation loop
+
+
+% plot the components of q separately, against the know solutions:
+%
+% q_1(t) = cos(omega*t), q_2(t) = 0, q_3(t) = 0
+% eta(t) = root(A_0 * sin^2(omega * t) + eta_0^2 * cos^2(omega * t))
+%
+% omega = root(2*epsilon / mass)
+% A_0 = 9*reduced_planck_constant^2 / 8 * mass^2 * eta_0^2 * epsilon
+%
+
+% log the results
+figure(1);
+plot(t, reshape(q_pos(1, 1, :), 1, simulation_steps)); % need to reduce the dimensionality
+hold on
+plot(t, cos(omega*t));
+hold off
+xlabel('time');
+ylabel('q1');
+title('q1 - position, component 1');
+drawnow
+
+figure(2);
+plot(t, reshape(q_pos(2, 1, :), 1, simulation_steps));
+xlabel('time');
+ylabel('q2');
+title('q2 - position, component 2');
+drawnow
+
+figure(3);
+plot(t, reshape(q_pos(3, 1, :), 1, simulation_steps));
+xlabel('time');
+ylabel('q3');
+title('q3 - position, component 3');
+drawnow
+
+
+% plot gamma
+figure(4);
+plot(t, gamma_packet_width);
+hold on
+plot(t, sqrt(...
+    (A_0 * sin(omega * (t)).^2) + ...
+    (gamma_0 * gamma_0 * cos(omega * t).^2 )));
+hold off
+xlabel('time');
+ylabel('gamma');
+title('gamma - packet width');
+drawnow
