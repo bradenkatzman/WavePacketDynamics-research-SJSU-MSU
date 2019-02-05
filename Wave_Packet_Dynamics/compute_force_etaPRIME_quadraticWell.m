@@ -1,11 +1,11 @@
 % Wave Packet Dynamics
-% Calculate etaPRIME for the potential operator:
+% Calculate etaPRIME for the quadratic well potential operator:
 % dEta/dt = (9 * reduced_planck_const^2) /(4 * mass^2 * gamma^3) - ...
-%                                               del(gamma)V
+%                                               partialV/partialGamma
 % V = epsilon(q^2 + gamma^2)
-% --> del(gamma)V = 2*epsilon*gamma
+% --> partialV/partialGamma = 2*epsilon*gamma
 
-function etaPRIME_acc = compute_force_etaPRIME_1(etaPRIME_acc, num_particles,...
+function etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles,...
        gamma_packet_width, simulation_step,...
        epsilon, mass, reduced_planck_constant)
    

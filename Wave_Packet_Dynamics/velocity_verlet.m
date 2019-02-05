@@ -10,7 +10,7 @@
 
 function [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = ...
 velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc,...
-    mass, delta_t, epsilon, reduced_planck_constant, simulation_step, ...
+    mass, delta_t, epsilon, reduced_planck_constant, Z, simulation_step, ...
     num_dimensions, num_particles, ...
     potential_operator_idx)
 
@@ -24,8 +24,13 @@ velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentu
 
         % compute the new acceleration pPRIME -- pPRIME(t+1)
         if potential_operator_idx == 1
-           pPRIME_acc = compute_force_pPRIME_1(pPRIME_acc, num_dimensions, num_particles,...
+           pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles,...
                                                                                 q_pos, simulation_step, epsilon);
+        elseif potential_operator_idx == 2
+            pPRIME_acc = compute_force_pPRIME_coulombInteraction(pPRIME_acc, num_dimensions, num_particles, Z, q_pos, gamma_packet_width, simulation_step);
+        else
+            disp('Potential operator idx not correctly set. Returning');
+            return;
         end
 
         % compute the new velocity p -- p(t+1)
@@ -41,8 +46,14 @@ velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentu
 
         % compute the new acceleration etaPRIME -- etaPRIME(t+1)
         if potential_operator_idx == 1
-            etaPRIME_acc = compute_force_etaPRIME_1(etaPRIME_acc, num_particles, ...
+            etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles, ...
                                                                     gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
+        elseif potential_operator_idx == 2
+            etaPRIME_acc = compute_force_ePRIME_coulombInteraction(etaPRIME_acc, num_particles, Z, reduced_planck_constant, mass, ...
+                                                                     gamma_packet_width, q_pos, simulation_step);
+        else
+            disp('Potential operator idx not correctly set. Returning');
+            return;
         end
 
         % compute the new velocity eta -- eta_packet_momentum(t+1)

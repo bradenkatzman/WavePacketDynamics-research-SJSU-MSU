@@ -27,16 +27,26 @@ reduced_planck_constant = 1;
 num_particles = 1;
 num_dimensions = 3;
 epsilon = 1;
-omega = sqrt((2 * epsilon) / mass);
+
+% values used for quadratic well operator
 gamma_0 = 1;
 A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
     (8 * mass * mass * gamma_0 * gamma_0 * epsilon);
+omega = sqrt((2 * epsilon) / mass);
+
+% values used for Coulomb interaction operator
+Z = 1;
 
 % simulation parameters
 simulation_steps = 10000; % the number of integration steps to take
 delta_t = 0.001; % integration time
 t_total = simulation_steps * delta_t;
-potential_operator_idx = 1; % we'll use this to toggle different equations of V
+
+% The following index designates which potential operator the simulation
+% will apply to the electron:
+% Quadratic Well = 1
+% Coulomb Interaction = 2
+potential_operator_idx = 4;
 
 t = linspace(0, t_total, simulation_steps); % t represents all the integration times in the interval 0 through 10
 
@@ -47,20 +57,32 @@ for simulation_step = 1:simulation_steps
     % initialize the positions, velocities and accelerations if starting
     % the simulation
     if (simulation_step == 1)
-        % the starting position for the (single) particle is (1,1,1)
-        [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize(num_particles, num_dimensions, simulation_steps);
-        
-        % compute the first forces pPRIME and etaPRIME
         if potential_operator_idx == 1
-            pPRIME_acc = compute_force_pPRIME_1(pPRIME_acc, num_dimensions, num_particles, q_pos, simulation_step, epsilon);
-            etaPRIME_acc = compute_force_etaPRIME_1(etaPRIME_acc, num_particles, gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
+            % initialize the first values according to the starting values
+            % designated for the quadratic well operator
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_quadtraticWell(num_particles, num_dimensions, simulation_steps);
+        
+            % compute the first forces pPRIME and etaPRIME given the
+            % quadratic well operator
+            pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles, q_pos, simulation_step, epsilon);
+            etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles, gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
+        elseif potential_operator_idx == 2
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, num_dimensions, simulation_steps);
+            
+            % compute the first forces pPRIME and etaPRIME given the
+            % Coulomb interaction operator
+            pPRIME_acc = compute_force_pPRIME_coulombInteraction(pPRIME_acc, num_dimensions, num_particles, Z, q_pos, gamma_packet_width, simulation_step);
+            etaPRIME_acc = compute_force_etaPRIME_coulombInteraction(etaPRIME_acc, num_particles, Z, reduced_planck_constant, mass, gamma_packet_width, q_pos, simulation_step);
+        else
+            disp('No potential operator index given, or incorrectly set. Returning');
+            return;
         end
     else
         % update the positions, velocities and acceleration using the
         % velocity verlet algorithm
         [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = ...
             velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc, ...
-            mass, delta_t, epsilon, reduced_planck_constant, simulation_step,...
+            mass, delta_t, epsilon, reduced_planck_constant, Z, simulation_step,...
             num_dimensions, num_particles, ...
             potential_operator_idx);
     end

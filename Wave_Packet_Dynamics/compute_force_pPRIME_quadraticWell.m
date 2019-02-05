@@ -1,10 +1,10 @@
 % Wave Packet Dynamics
-% Calculate pPRIME for the potential operator:
+% Calculate pPRIME for the quadratic well potential operator:
 % dp/dt = -del(q)V
 % V = epsilon(q^2 + gamma^2)
-% --> del(q)V = 2*epsilon*q
+% --> -del(q)V = -2*epsilon*q
 
-function pPRIME_acc = compute_force_pPRIME_1(pPRIME_acc, num_dimensions, num_particles,...
+function pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles,...
     q_pos, simulation_step,...
     epsilon)
     
