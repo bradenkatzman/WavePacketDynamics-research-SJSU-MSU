@@ -19,6 +19,8 @@
 % gamma(t) = wave packet width 
 % eta(t) = wave packet width momentum
 %
+% NOTE: Atomic units are assumed and used throughout the simulation
+%
 % Resources Used:
 % 1. http://www.cchem.berkeley.edu/chem195/_n_v_e___verlet_8m.html
 % 2. https://people.sc.fsu.edu/~jburkardt/m_src/md/md.m
@@ -39,13 +41,14 @@ omega = sqrt((2 * epsilon) / mass);
 
 % values used for Coulomb interaction operator
 Z = 1; % atomic number
+e = 1;
 A = (9 * reduced_planck_constant * reduced_planck_constant) / ...
-    (4 * mass * mass * Z * exp(2)); % the transformation introduced in eqs (28), (29) allow us to represent all
+    (4 * mass * mass * Z * e); % the transformation introduced in eqs (28), (29) allow us to represent all
                                     % tunable parameters in the simulation
                                     % with this new variable A
 
 % simulation parameters
-simulation_steps = 1000; % the number of integration steps to take
+simulation_steps = 100000; % the number of integration steps to take
 delta_t = 0.001; % integration time
 t_total = simulation_steps * delta_t;
 
@@ -74,7 +77,7 @@ for simulation_step = 1:simulation_steps
             pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles, q_pos, simulation_step, epsilon);
             etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles, gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
         elseif potential_operator_idx == 2
-            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps);
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps, A);
             
             % compute the first forces pPRIME and etaPRIME given the
             % Coulomb interaction operator
