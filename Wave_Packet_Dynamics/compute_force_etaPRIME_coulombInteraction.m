@@ -20,7 +20,7 @@ function etaPRIME_acc = compute_force_etaPRIME_coulombInteraction(etaPRIME_acc, 
 %           (2 * gamma(particle_itr, simulation_step).^2)));
        
        % compute eta' at t using equation (29) --> i.e. gamma'' = eta'
-       etaPRIME_acc(particle_itr, simulation_step) = (A/gamma(particle_itr, simulation_step).^3) - ...
+       etaPRIME_acc(particle_itr, simulation_step) = (A/(gamma(particle_itr, simulation_step).^3)) - ...
            ((sqrt(6/pi)) * (1/(gamma(particle_itr, simulation_step).^2)) * (exp((-3*(q_pos(particle_itr, simulation_step).^2))/(2*(gamma(particle_itr, simulation_step).^2)))));
     end
 end

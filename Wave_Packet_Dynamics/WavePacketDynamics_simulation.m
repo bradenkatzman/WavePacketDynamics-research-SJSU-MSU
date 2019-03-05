@@ -1,4 +1,5 @@
-% Wave Packet Dynamics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%Wave Packet Dynamics
 %
 % Simulate the dynamics of a single electron orbiting a nucleus of
 % arbitrary atomic number Z
@@ -20,10 +21,7 @@
 % eta(t) = wave packet width momentum
 %
 % NOTE: Atomic units are assumed and used throughout the simulation
-%
-% Resources Used:
-% 1. http://www.cchem.berkeley.edu/chem195/_n_v_e___verlet_8m.html
-% 2. https://people.sc.fsu.edu/~jburkardt/m_src/md/md.m
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % environment/material configuration
@@ -32,33 +30,40 @@ reduced_planck_constant = 1;
 num_particles = 1;
 num_dimensions = 3;
 epsilon = 1;
+% -----------------------------------
 
-% values used for quadratic well operator
-gamma_0 = 1;
-A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
-    (8 * mass * mass * gamma_0 * gamma_0 * epsilon);
-omega = sqrt((2 * epsilon) / mass);
+% simulation parameters
+simulation_steps = 100; % the number of integration steps to take
+delta_t = .1; % integration time change
+t_total = simulation_steps * delta_t;
+t = linspace(0, t_total, simulation_steps); % t represents all the integration times in the interval 0 through t_total
+% ---------------------------------------------
 
 % values used for Coulomb interaction operator
 Z = 1; % atomic number
 e = 1;
-A = (9 * reduced_planck_constant * reduced_planck_constant) / ...
-    (4 * mass * mass * Z * e); % the transformation introduced in eqs (28), (29) allow us to represent all
+A = 1;
+x_0 = .5;
+gamma_0 = 1;
+%A = (9 * reduced_planck_constant * reduced_planck_constant) / ...
+ %   (4 * mass * mass * Z * e * e); % the transformation introduced in eqs (28), (29) allow us to represent all
                                     % tunable parameters in the simulation
                                     % with this new variable A
+% ---------------------------------------------
 
-% simulation parameters
-simulation_steps = 100000; % the number of integration steps to take
-delta_t = 0.001; % integration time
-t_total = simulation_steps * delta_t;
+
+% values used for quadratic well operator
+gamma_0_well = 1;
+A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
+    (8 * mass * mass * gamma_0_well * gamma_0_well * epsilon);
+omega = sqrt((2 * epsilon) / mass);
+% ----------------------------------------
 
 % The following index designates which potential operator the simulation
 % will apply to the electron:
 % Quadratic Well = 1
 % Coulomb Interaction = 2
 potential_operator_idx = 2;
-
-t = linspace(0, t_total, simulation_steps); % t represents all the integration times in the interval 0 through 10
 
 for simulation_step = 1:simulation_steps
     % STEP 1 - Solve for Q (position) and P (velocity) using Velocity
@@ -77,7 +82,7 @@ for simulation_step = 1:simulation_steps
             pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles, q_pos, simulation_step, epsilon);
             etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles, gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
         elseif potential_operator_idx == 2
-            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps, A);
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps, A, x_0, gamma_0);
             
             % compute the first forces pPRIME and etaPRIME given the
             % Coulomb interaction operator
@@ -148,17 +153,5 @@ if potential_operator_idx == 1
     title('Quadratic Well Operator: gamma - packet width');
     drawnow
 elseif potential_operator_idx == 2
-    figure(1);
-    plot(t, q_pos);
-    xlabel('time');
-    ylabel('q1');
-    title(['Coulomb Interaction Operator: x (q position component #1), Z=', num2str(Z)]);
-    
-    % plot gamma
-    figure(4);
-    plot(t, gamma_packet_width);
-    xlabel('time');
-    ylabel('gamma');
-    title(['Coulomb Interaction Operator: gamma - packet width, Z=', num2str(Z)]);
-    drawnow
+    visualize_coulomb(t, q_pos, gamma_packet_width, Z, A, e);
 end
