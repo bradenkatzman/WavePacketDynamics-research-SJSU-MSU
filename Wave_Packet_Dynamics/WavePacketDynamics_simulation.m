@@ -49,6 +49,14 @@ gamma_0 = 1;
  %   (4 * mass * mass * Z * e * e); % the transformation introduced in eqs (28), (29) allow us to represent all
                                     % tunable parameters in the simulation
                                     % with this new variable A
+% toggles for which plots we want to see (1-yes, 0-no)
+% 1. q over time
+% 2. gamma over time
+% 3. q vs. gamma
+% 4. isocontours of V
+% 5. surface of V
+% 6. pseudocolor plot of V
+visualization_toggles = [0, 0, 0, 1, 1, 1];
 % ---------------------------------------------
 
 
@@ -153,5 +161,5 @@ if potential_operator_idx == 1
     title('Quadratic Well Operator: gamma - packet width');
     drawnow
 elseif potential_operator_idx == 2
-    visualize_coulomb(t, q_pos, gamma_packet_width, Z, A, e);
+    visualize_coulomb(t, q_pos, gamma_packet_width, Z, A, e, visualization_toggles);
 end
