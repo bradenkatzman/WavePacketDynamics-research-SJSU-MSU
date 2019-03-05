@@ -1,6 +1,6 @@
 Wave Packet Dynamics
 
-The Schrodinger equation is computationally intensive to solve, motivating a need to use accurate approximations and representations. The Wave Packet equation is one such representation. In this project, we explore the solution space of a numerical method for solving the wave packet equation, given by a Gaussian function. The parameters of the equations are represented by the follow system of differential equations:
+The Schrodinger equation is computationally intensive to solve, motivating a need to use accurate approximations and representations. The Wave Packet equation is one such representation. In this project, we explore the solution space of a numerical method for solving the wave packet equation, given by a Gaussian function. The parameters of the equations are represented by the following system of differential equations:
 
 dqdt = (1/mass) * p
 dpdt = -del(q)V
