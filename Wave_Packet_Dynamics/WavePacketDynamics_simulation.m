@@ -33,22 +33,43 @@ epsilon = 1;
 % -----------------------------------
 
 % simulation parameters
-simulation_steps = 100; % the number of integration steps to take
+simulation_steps = 1000; % the number of integration steps to take
 delta_t = .1; % integration time change
 t_total = simulation_steps * delta_t;
 t = linspace(0, t_total, simulation_steps); % t represents all the integration times in the interval 0 through t_total
 % ---------------------------------------------
 
+% values used for quadratic well operator
+gamma_0_well = 1;
+A_0_well = (9 * reduced_planck_constant * reduced_planck_constant) / ...
+    (8 * mass * mass * gamma_0_well * gamma_0_well * epsilon);
+omega_well = sqrt((2 * epsilon) / mass);
+% ----------------------------------------
+
 % values used for Coulomb interaction operator
-Z = 1; % atomic number
-e = 1;
-A = 1;
-x_0 = .5;
-gamma_0 = 1;
+Z_CI = 1; % atomic number
+e_CI = 1;
+A_CI = 2;
+x_0_CI = 1;
+gamma_0_CI = 1;
 %A = (9 * reduced_planck_constant * reduced_planck_constant) / ...
  %   (4 * mass * mass * Z * e * e); % the transformation introduced in eqs (28), (29) allow us to represent all
                                     % tunable parameters in the simulation
                                     % with this new variable A
+                                    
+
+% values used for screened Coulomb interaction
+Z_SCI = 1;
+e_SCI = 1;
+q_0_SCI = zeros(num_dimensions, num_particles);
+q_0_SCI(1,1) = .01;
+q_0_SCI(2, 1) = .01;
+q_0_SCI(3, 1) = .01;
+
+gamma_0_SCI = 1;
+lambda_SCI = 1;
+% ---------------------------------------------
+                                    
 % toggles for which plots we want to see (1-yes, 0-no)
 % 1. q over time
 % 2. gamma over time
@@ -56,23 +77,17 @@ gamma_0 = 1;
 % 4. isocontours of V
 % 5. surface of V
 % 6. pseudocolor plot of V
-visualization_toggles = [0, 0, 0, 1, 1, 1];
+visualization_toggles = [0, 0, 1, 1, 1, 1];
 % ---------------------------------------------
-
-
-% values used for quadratic well operator
-gamma_0_well = 1;
-A_0 = (9 * reduced_planck_constant * reduced_planck_constant) / ...
-    (8 * mass * mass * gamma_0_well * gamma_0_well * epsilon);
-omega = sqrt((2 * epsilon) / mass);
-% ----------------------------------------
 
 % The following index designates which potential operator the simulation
 % will apply to the electron:
 % Quadratic Well = 1
 % Coulomb Interaction = 2
-potential_operator_idx = 2;
+% Screened Coulomb Interaction = 3
+potential_operator_idx = 3;
 
+close all; % close any open figures
 for simulation_step = 1:simulation_steps
     % STEP 1 - Solve for Q (position) and P (velocity) using Velocity
     % Verlet
@@ -90,12 +105,15 @@ for simulation_step = 1:simulation_steps
             pPRIME_acc = compute_force_pPRIME_quadraticWell(pPRIME_acc, num_dimensions, num_particles, q_pos, simulation_step, epsilon);
             etaPRIME_acc = compute_force_etaPRIME_quadraticWell(etaPRIME_acc, num_particles, gamma_packet_width, simulation_step, epsilon, mass, reduced_planck_constant);
         elseif potential_operator_idx == 2
-            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps, A, x_0, gamma_0);
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_coulombInteraction(num_particles, simulation_steps, A_CI, x_0_CI, gamma_0_CI);
             
             % compute the first forces pPRIME and etaPRIME given the
             % Coulomb interaction operator
-            pPRIME_acc = compute_force_pPRIME_coulombInteraction(pPRIME_acc, num_particles, Z, q_pos, gamma_packet_width, simulation_step);
-            etaPRIME_acc = compute_force_etaPRIME_coulombInteraction(etaPRIME_acc, num_particles, A, Z, reduced_planck_constant, mass, gamma_packet_width, q_pos, simulation_step);
+            pPRIME_acc = compute_force_pPRIME_coulombInteraction(pPRIME_acc, num_particles, Z_CI, q_pos, gamma_packet_width, simulation_step);
+            etaPRIME_acc = compute_force_etaPRIME_coulombInteraction(etaPRIME_acc, num_particles, A_CI, Z_CI, reduced_planck_constant, mass, gamma_packet_width, q_pos, simulation_step);
+        elseif potential_operator_idx == 3
+            [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = initialize_screenedCoulombInteraction(num_particles, num_dimensions, simulation_steps, q_0_SCI, gamma_0_SCI);
+        
         else
             disp('No potential operator index given, or incorrectly set. Returning');
             return;
@@ -105,7 +123,7 @@ for simulation_step = 1:simulation_steps
         % velocity verlet algorithm
         [q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc] = ...
             velocity_verlet(q_pos, p_vel, pPRIME_acc, gamma_packet_width, eta_packet_momentum, etaPRIME_acc, ...
-            mass, delta_t, epsilon, reduced_planck_constant, A, Z, simulation_step,...
+            mass, delta_t, epsilon, reduced_planck_constant, A_CI, Z_CI, Z_SCI, e_CI, e_SCI, lambda_SCI, simulation_step,...
             num_dimensions, num_particles, ...
             potential_operator_idx);
     end
@@ -122,44 +140,10 @@ end % end simulation loop
 %
 
 % log the results
-if potential_operator_idx == 1
-    figure(1);
-    plot(t, reshape(q_pos(1, 1, :), 1, simulation_steps)); % need to reduce the dimensionality
-    hold on
-    plot(t, cos(omega*t));
-    hold off
-    xlabel('time');
-    ylabel('q1');
-    title('Quadratic Well Operator: q1 - position, component 1');
-    drawnow
-
-    figure(2);
-    plot(t, reshape(q_pos(2, 1, :), 1, simulation_steps));
-    xlabel('time');
-    ylabel('q2');
-    title('Quadratic Well Operator: q2 - position, component 2');
-    drawnow
-
-    figure(3);
-    plot(t, reshape(q_pos(3, 1, :), 1, simulation_steps));
-    xlabel('time');
-    ylabel('q3');
-    title('Quadratic Well Operator: q3 - position, component 3');
-    drawnow
-
-
-    % plot gamma
-    figure(4);
-    plot(t, gamma_packet_width);
-    hold on
-    plot(t, sqrt(...
-        (A_0 * sin(omega * (t)).^2) + ...
-        (gamma_0 * gamma_0 * cos(omega * t).^2 )));
-    hold off
-    xlabel('time');
-    ylabel('gamma');
-    title('Quadratic Well Operator: gamma - packet width');
-    drawnow
-elseif potential_operator_idx == 2
-    visualize_coulomb(t, q_pos, gamma_packet_width, Z, A, e, visualization_toggles);
+if potential_operator_idx == 1 % quadratic well
+    visualize_quadraticWell(t, q_pos, gamma_packet_width, simulation_steps, A_0_well, omega_well, gamma_0_well);
+elseif potential_operator_idx == 2 % coulomb interaction
+    visualize_coulomb(t, q_pos, gamma_packet_width, Z_CI, A_CI, e_CI, visualization_toggles);
+elseif potential_operator_idx == 3 % screened coulomb interaction
+    visualize_screenedCoulomb(t, q_pos, gamma_packet_width, q_0_SCI, gamma_0_SCI, Z_SCI, e_SCI, lambda_SCI, simulation_steps, visualization_toggles);
 end

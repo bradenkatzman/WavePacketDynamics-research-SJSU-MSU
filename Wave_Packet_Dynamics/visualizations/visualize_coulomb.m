@@ -41,7 +41,7 @@ function [] = visualize_coulomb(t, q_pos, gamma_packet_width, ...
         [X, Y] = meshgrid(q_pos, gamma_packet_width);
         V = ((-Z*e) ./ X) .* erf((sqrt(3/2)) * (X ./ Y));
         figure(4);
-        contourf(X, Y, V);
+        contourf(X, Y, V, 20);
         xlabel('q', 'FontSize', 15);
         ylabel('\gamma', 'FontSize', 25);
         title(['Coulomb: Isocontours of V(q, \gamma) with A=', num2str(A)]);
@@ -51,13 +51,15 @@ function [] = visualize_coulomb(t, q_pos, gamma_packet_width, ...
         % plot the surface of V
         figure(5);
         surf(X, Y, V);
+        shading interp;
         title(['Coulomb: Surface of V(q, \gamma) with A=', num2str(A)]);
     end
     
     if visualization_toggles(6) == 1
         % plot the pseudocolor plot
         figure(6);
-        pcolor(V);
-        title(['Coulomb: Pseudocolor plot of V(q, \gamma) with A=', num2str(A)]);
+        pcolor(X, Y, V);
+        shading interp;
+        title(['Coulomb: Pseudocolor plot (with shading interp) of V(q, \gamma) with A=', num2str(A)]);
     end
 end
