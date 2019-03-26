@@ -47,16 +47,36 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
         plot(reshape(q_pos(1, 1, :), 1, simulation_steps), gamma_packet_width);
         hold on
         plot(q_0(1,1), gamma_0, 'r*');
-        text(q_0(1,1),gamma_0,'(q_0, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left')
+        text(q_0(1,1),gamma_0,'(q_01, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left')
         xlabel('x', 'FontSize', 15);
         ylabel('\gamma', 'FontSize', 25);
-        title(['Coulomb: q_01 vs. \gamma',', Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
+        title(['Screened Coulomb: q_01 vs. \gamma',', Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
+        grid on;
+        
+        figure(6);
+        plot(reshape(q_pos(2, 1, :), 1, simulation_steps), gamma_packet_width);
+        hold on
+        plot(q_0(2,1), gamma_0, 'r*');
+        text(q_0(2,1),gamma_0,'(q_03, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left')
+        xlabel('x', 'FontSize', 15);
+        ylabel('\gamma', 'FontSize', 25);
+        title(['Screened Coulomb: q_02 vs. \gamma',', Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
+        grid on;
+        
+        figure(7);
+        plot(reshape(q_pos(3, 1, :), 1, simulation_steps), gamma_packet_width);
+        hold on
+        plot(q_0(3,1), gamma_0, 'r*');
+        text(q_0(3,1),gamma_0,'(q_03, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left')
+        xlabel('x', 'FontSize', 15);
+        ylabel('\gamma', 'FontSize', 25);
+        title(['Screened Coulomb: q_03 vs. \gamma',', Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
         grid on;
     end
     
     if visualization_toggles(4) == 1
         % plot the isocontours of V(q_norm, gamma)        
-        figure(6);
+        figure(8);
         contourf(qX, gammaY, V, 20);
         shading interp;
         xlabel('q (vector-magnitude)', 'FontSize', 15);
@@ -66,7 +86,7 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     
     if visualization_toggles(5) == 1
         % plot the surface of V
-        figure(7);
+        figure(9);
         surf(qX, gammaY, V);
         shading interp;
         title(['Coulomb: Surface of V(q, \gamma) with Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
@@ -74,7 +94,7 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     
     if visualization_toggles(6) == 1
         % plot the pseudocolor plot
-        figure(8);
+        figure(10);
         pcolor(qX, gammaY, V);
         shading interp;
         title(['Coulomb: Pseudocolor plot (with shading interp) of V(q, \gamma) with Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
