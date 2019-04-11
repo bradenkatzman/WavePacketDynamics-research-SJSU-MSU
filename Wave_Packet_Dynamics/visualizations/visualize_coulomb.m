@@ -3,6 +3,9 @@ function [] = visualize_coulomb(t, q_pos, gamma_packet_width, ...
     Z, A, e, ...
     visualization_toggles)
 
+        [X, Y] = meshgrid(-2:.1:2, .1:.1:2);
+        V = ((-Z*e) ./ X) .* erf((sqrt(3/2)) * (X ./ Y));
+
     if visualization_toggles(1) == 1
         % plot q over time
         figure(1);
@@ -38,8 +41,7 @@ function [] = visualize_coulomb(t, q_pos, gamma_packet_width, ...
     
     if visualization_toggles(4) == 1
         % plot the isocontours of V(q, gamma)
-        [X, Y] = meshgrid(q_pos, gamma_packet_width);
-        V = ((-Z*e) ./ X) .* erf((sqrt(3/2)) * (X ./ Y));
+       
         figure(4);
         contourf(X, Y, V, 20);
         xlabel('q', 'FontSize', 15);

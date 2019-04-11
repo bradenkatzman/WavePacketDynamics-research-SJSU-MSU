@@ -19,6 +19,6 @@ function pPRIME_acc = compute_force_pPRIME_squareWell(pPRIME_acc,...
     gamma = gamma_packet_width(1, simulation_step);
 
     pPRIME_acc(1, simulation_step) = -1 * ...
-        ((V0/(sqrt(2*pi) * gamma)) * ((exp((-1)*(a - q)/(sqrt(2) * gamma))^2) - (exp((-1) * (a + q)/(sqrt(2) * gamma))^2)));
+        ((V0/(sqrt(2*pi) * gamma)) * (exp(-((a - q)/(sqrt(2) * gamma))^2) - (exp(-((a + q)/(sqrt(2) * gamma))^2))));
     
 end

@@ -3,7 +3,8 @@ function [] = visualize_squareWell(t, q_pos, gamma_packet_width, ...
     V0, a, m, ...
     visualization_toggles)
 
-    [X, Y] = meshgrid(q_pos, gamma_packet_width);
+    %[X, Y] = meshgrid(q_pos, gamma_packet_width);
+    [X, Y] = meshgrid(-10:.1:10, .1:.01:10);
     V = compute_squareWell_potential(X, Y, V0, a, m);
 
     if visualization_toggles(1) == 1
@@ -11,7 +12,7 @@ function [] = visualize_squareWell(t, q_pos, gamma_packet_width, ...
         figure(1);
         plot(t, q_pos);
         xlabel('time');
-        ylabel('q1');
+        ylabel('q_1');
         title(['Square Well: q (position), V0=', num2str(V0), ', a=', num2str(a)]);
         grid on;
     end
@@ -21,8 +22,8 @@ function [] = visualize_squareWell(t, q_pos, gamma_packet_width, ...
         figure(2);
         plot(t, gamma_packet_width);
         xlabel('time');
-        ylabel('gamma');
-        title(['Square Well: gamma - packet width, V0=', num2str(V0), ', a=', num2str(a)]);
+        ylabel('\gamma');
+        title(['Square Well: \gamma - packet width, V0=', num2str(V0), ', a=', num2str(a)]);
         grid on;
     end
     
@@ -32,10 +33,10 @@ function [] = visualize_squareWell(t, q_pos, gamma_packet_width, ...
         plot(q_pos, gamma_packet_width);
         hold on
         plot(q_pos(1,1), gamma_packet_width(1,1), 'r*');
-        text(q_pos(1,1),gamma_packet_width(1,1),'(x_0, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left')
+        text(q_pos(1,1),gamma_packet_width(1,1),'(x_0, \gamma_0)','VerticalAlignment','top','HorizontalAlignment','left');
         xlabel('x', 'FontSize', 15);
         ylabel('\gamma', 'FontSize', 25);
-        title(['Square Well: x vs. gamma, , V0=', num2str(V0), ', a=', num2str(a)]);
+        title(['Square Well: x vs. gamma V0=', num2str(V0), ', a=', num2str(a)]);
         grid on;
     end
     
@@ -53,7 +54,7 @@ function [] = visualize_squareWell(t, q_pos, gamma_packet_width, ...
         figure(5);
         surf(X, Y, V);
         shading interp;
-        title(['Square Well: Surface of V(q, \gamma) with , V0=', num2str(V0), ', a=', num2str(a)]);
+        title(['Square Well: Surface of V(q, \gamma) with V0=', num2str(V0), ', a=', num2str(a)]);
     end
     
     if visualization_toggles(6) == 1

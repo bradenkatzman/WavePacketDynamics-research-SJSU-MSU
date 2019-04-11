@@ -14,5 +14,5 @@ function etaPRIME_acc = compute_force_etaPRIME_squareWell(etaPRIME_acc, ...
     gamma = gamma_packet_width(1, simulation_step);
     
     etaPRIME_acc(1, simulation_step) = -1 * ...
-        ((-1/(4*m*gamma^3)) + ((V0/sqrt(2*pi)*gamma^2) * (((a + q)*exp((-1)*((a + q)/(sqrt(2)*gamma)))^2) + (exp((-1)*((a - q)/(sqrt(2)*gamma)))^2))));
+        ((-1/(4*m*(gamma^3))) + ((V0/(sqrt(2*pi)*(gamma^2))) * (((a + q)*exp(-((a + q)/(sqrt(2)*gamma))^2)) + ((a - q)*exp(-((a - q)/(sqrt(2)*gamma))^2)))));
 end

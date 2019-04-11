@@ -1,6 +1,10 @@
 
 function [] = visualize_quadraticWell(t, q_pos, gamma_packet_width, simulation_steps, ...
-    A_0, omega, gamma_0)
+    A_0, omega, gamma_0, eps)
+
+    [X, Y] = meshgrid(-1:.1:1, 1:.01:1.2);
+    V = eps .* (X.^2 + Y.^2);
+
     figure(1);
     plot(t, reshape(q_pos(1, 1, :), 1, simulation_steps)); % need to reduce the dimensionality
     hold on
@@ -38,3 +42,8 @@ function [] = visualize_quadraticWell(t, q_pos, gamma_packet_width, simulation_s
     ylabel('gamma');
     title('Quadratic Well Operator: gamma - packet width');
     drawnow
+    
+    figure(5);
+    surf(X, Y, V);
+    shading interp;
+    title('Quadratic Well: Surface of V');

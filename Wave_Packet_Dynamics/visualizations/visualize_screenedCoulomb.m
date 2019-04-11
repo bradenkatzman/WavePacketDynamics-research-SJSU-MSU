@@ -3,9 +3,10 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     simulation_steps, visualization_toggles)
 
     % make a grid of the magnitude of q and gamma and compute the potential
-    q_norm = sqrt(sum(q_pos.^2, 2));
-    [qX, gammaY] = meshgrid(reshape(q_norm(1, 1, :), 1, simulation_steps), gamma_packet_width);
-    V = compute_screenedCoulomb_potential(qX, gammaY, Z, e, lambda);
+    %q_norm = sqrt(sum(q_pos.^2, 2));
+    %[qX, gammaY] = meshgrid(reshape(q_norm(1, 1, :), 1, simulation_steps), gamma_packet_width);
+    [X, Y] = meshgrid(.01:.05:10.01, .01:.05:10.01);
+    V = compute_screenedCoulomb_potential(X, Y, Z, e, lambda);
 
     if visualization_toggles(1) == 1
         % plot q over time
@@ -77,7 +78,7 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     if visualization_toggles(4) == 1
         % plot the isocontours of V(q_norm, gamma)        
         figure(8);
-        contourf(qX, gammaY, V, 20);
+        contourf(X, Y, V, 20);
         shading interp;
         xlabel('q (vector-magnitude)', 'FontSize', 15);
         ylabel('\gamma', 'FontSize', 25);
@@ -87,7 +88,7 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     if visualization_toggles(5) == 1
         % plot the surface of V
         figure(9);
-        surf(qX, gammaY, V);
+        surf(X, Y, V);
         shading interp;
         title(['Coulomb: Surface of V(q, \gamma) with Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
     end
@@ -95,7 +96,7 @@ function [] = visualize_screenedCoulomb(t, q_pos, gamma_packet_width, ...
     if visualization_toggles(6) == 1
         % plot the pseudocolor plot
         figure(10);
-        pcolor(qX, gammaY, V);
+        pcolor(X, Y, V);
         shading interp;
         title(['Coulomb: Pseudocolor plot (with shading interp) of V(q, \gamma) with Z=', num2str(Z), ', e=', num2str(e), ', \lambda', '=', num2str(lambda)]);
     end
